@@ -36,7 +36,11 @@ defmodule KafkaEx.Compression do
   end
 
   def decompress(@lz4_attribute, data) do
-    :lz4f.decompress(data)
+    IO.puts("decompress #{inspect data}")
+    compression_context = :lz4f.create_decompression_context()
+    :lz4f.decompress(compression_context, data)
+    |> :erlang.iolist_to_binary()
+    |> IO.inspect()
   end
 
   @doc """
@@ -54,7 +58,8 @@ defmodule KafkaEx.Compression do
     {compressed_data, @gzip_attribute}
   end
   def compress(:lz4, data) do
-    {:lz4f.compress_frame(data), @lz4_attribute}
+    IO.puts("compress #{data}")
+    {:lz4f.compress_frame(data), @lz4_attribute} |> IO.inspect
   end
 
   def snappy_decompress_chunk(<<>>, so_far) do
