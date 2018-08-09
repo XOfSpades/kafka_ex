@@ -41,6 +41,9 @@ defmodule KafkaEx.Mixfile do
       {:ex_doc, "~> 0.18", only: :dev},
       {:snappy,
        git: "https://github.com/fdmanana/snappy-erlang-nif",
+       only: [:dev, :test]},
+      {:lz4,
+       git: "https://github.com/rabbitmq/lz4-erlang",
        only: [:dev, :test]}
     ]
   end

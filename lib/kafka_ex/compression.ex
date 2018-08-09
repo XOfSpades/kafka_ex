@@ -16,9 +16,10 @@ defmodule KafkaEx.Compression do
 
   @gzip_attribute 1
   @snappy_attribute 2
+  @lz4_attribute 3
 
   @type attribute_t :: integer
-  @type compression_type_t :: :snappy | :gzip
+  @type compression_type_t :: :snappy | :gzip | :lz4
 
   @doc """
   This function should pattern match on the attribute value and return
@@ -34,6 +35,10 @@ defmodule KafkaEx.Compression do
     snappy_decompress_chunk(rest, <<>>)
   end
 
+  def decompress(@lz4_attribute, data) do
+    :lz4f.decompress(data)
+  end
+
   @doc """
   This function should pattern match on the compression_type atom and
   return the compressed data as well as the corresponding attribute
@@ -47,6 +52,9 @@ defmodule KafkaEx.Compression do
   def compress(:gzip, data) do
     compressed_data = :zlib.gzip(data)
     {compressed_data, @gzip_attribute}
+  end
+  def compress(:lz4, data) do
+    {:lz4f.compress_frame(data), @lz4_attribute}
   end
 
   def snappy_decompress_chunk(<<>>, so_far) do
